@@ -18,6 +18,7 @@ body {
     max-width: 400px;
     text-align: center;
     border: 1px solid #ddd; /* 枠線を追加 */
+    position: relative; /* 子要素のinfo-overlay-triggerをposition: absoluteで配置するため */
 }
 
 h1 {
@@ -145,12 +146,14 @@ button:disabled {
     font-weight: bold;
     color: #0c5460;
 }
-/* ★ここから追加★ */
+
+
+/* --- 情報アイコンとオーバーレイのスタイル --- */
 /* 情報アイコンのトリガー */
 .info-overlay-trigger {
-    position: fixed; /* 画面に対して固定 */
-    top: 20px; /* 上からの位置 */
-    right: 20px; /* 右からの位置 */
+    position: absolute; /* 親要素 .player-container に対して相対的に配置 */
+    top: 10px; /* 上からの位置 */
+    right: 10px; /* 右からの位置 */
     width: 30px;
     height: 30px;
     background-color: rgba(0, 0, 0, 0.6); /* 半透明の黒背景 */
@@ -251,4 +254,3 @@ button:disabled {
 .info-content .close-button:hover {
     color: #333;
 }
-/* ★ここまで追加★ */
