@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     nextButton.addEventListener('click', playNextSong);
     repeatButton.addEventListener('click', toggleRepeatMode);
     shuffleButton.addEventListener('click', toggleShuffle);
-
+    if (clearButton) clearButton.addEventListener('click', clearPlaylist);
     audio.addEventListener('ended', handleSongEnd);
     audio.addEventListener('play', () => {
         isPlaying = true;
@@ -130,7 +130,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         playlist.forEach((song, index) => {
             const listItem = document.createElement('li');
-            listItem.textContent = song.name;
+            const titleSpan = document.createElement('span');
+            titleSpan.textContent = song.name;
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-button';
+            deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeSong(index);
+            });
+            listItem.appendChild(titleSpan);
+            listItem.appendChild(deleteBtn);
             if (index === currentSongIndex) {
                 listItem.classList.add('active');
                 // currentSongTitle が存在する場合のみtextContentを設定
@@ -324,6 +334,46 @@ document.addEventListener('DOMContentLoaded', (event) => {
         } else {
             currentSongIndex = -1;
         }
+    }
+    // 指定した曲を削除
+    function removeSong(index) {
+        const song = playlist[index];
+        if (!song) return;
+
+        // オブジェクトURLを解放
+        URL.revokeObjectURL(song.url);
+
+        // プレイリストから削除
+        playlist.splice(index, 1);
+
+        // 元のプレイリストからも削除
+        const originalIndex = originalPlaylist.findIndex(s => s.url === song.url);
+        if (originalIndex !== -1) {
+            originalPlaylist.splice(originalIndex, 1);
+        }
+
+        // インデックス調整
+        if (currentSongIndex === index) {
+            pauseSong();
+            currentSongIndex = -1;
+        } else if (index < currentSongIndex) {
+            currentSongIndex -= 1;
+        }
+
+        updatePlaylistUI();
+        updatePlayerControls();
+    }
+
+    // すべての曲を削除
+    function clearPlaylist() {
+        playlist.forEach(song => URL.revokeObjectURL(song.url));
+        playlist = [];
+        originalPlaylist = [];
+        currentSongIndex = -1;
+        pauseSong();
+        audio.src = '';
+        updatePlaylistUI();
+        updatePlayerControls();
     }
 
     // プレイヤーコントロールの状態更新
