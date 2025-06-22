@@ -38,11 +38,11 @@ shuffleButton.addEventListener('click', toggleShuffle);
 audio.addEventListener('ended', handleSongEnd);
 audio.addEventListener('play', () => {
     isPlaying = true;
-    playPauseButton.textContent = '一時停止';
+    playPauseButton.innerHTML = '<i class="fas fa-pause"></i>'; // ▶️ から ⏸️ に変更
 });
 audio.addEventListener('pause', () => {
     isPlaying = false;
-    playPauseButton.textContent = '再生';
+    playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // ⏸️ から ▶️ に変更
 });
 
 // 情報オーバーレイ関連のイベント
@@ -236,15 +236,15 @@ function handleSongEnd() {
 function toggleRepeatMode() {
     if (repeatMode === 'none') {
         repeatMode = 'one';
-        repeatButton.textContent = 'リピート: 1曲';
+        repeatButton.innerHTML = '<i class="fas fa-redo-alt"></i> リピート: 1曲';
         repeatButton.classList.add('active');
     } else if (repeatMode === 'one') {
         repeatMode = 'all';
-        repeatButton.textContent = 'リピート: 全曲';
+        repeatButton.innerHTML = '<i class="fas fa-redo-alt"></i> リピート: 全曲';
         repeatButton.classList.add('active');
     } else {
         repeatMode = 'none';
-        repeatButton.textContent = 'リピート: OFF';
+        repeatButton.innerHTML = '<i class="fas fa-redo-alt"></i> リピート: OFF';
         repeatButton.classList.remove('active');
     }
     updatePlayerControls();
@@ -254,11 +254,11 @@ function toggleRepeatMode() {
 function toggleShuffle() {
     isShuffling = !isShuffling;
     if (isShuffling) {
-        shuffleButton.textContent = 'シャッフル: ON';
+        shuffleButton.innerHTML = '<i class="fas fa-random"></i> シャッフル: ON';
         shuffleButton.classList.add('active');
         shufflePlaylist();
     } else {
-        shuffleButton.textContent = 'シャッフル: OFF';
+        shuffleButton.innerHTML = '<i class="fas fa-random"></i> シャッフル: OFF';
         shuffleButton.classList.remove('active');
         unshufflePlaylist();
     }
@@ -319,10 +319,10 @@ function updatePlayerControls() {
     shuffleButton.disabled = !hasSongs;
 
     if (!hasSongs) {
-        playPauseButton.textContent = '再生';
+        playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // 曲がない場合は再生アイコン
         currentSongTitle.textContent = 'ファイルを選択してください';
     } else if (audio.paused && currentSongIndex === -1) {
-        playPauseButton.textContent = '再生';
+        playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // 選択なしで停止中は再生アイコン
         currentSongTitle.textContent = '選択されていません';
     }
 }
