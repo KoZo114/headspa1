@@ -1,3 +1,4 @@
+// --- グローバル変数・定数の宣言 ---
 const audio = new Audio();
 let playlist = [];
 let originalPlaylist = []; // シャッフル前の元のプレイリスト
@@ -6,14 +7,45 @@ let isPlaying = false;
 let repeatMode = 'none'; // 'none', 'one', 'all'
 let isShuffling = false;
 
-// DOM要素の取得
-// ★ここから追加★
-// 新しいDOM要素の取得
+// --- DOM要素の取得 ---
+// プレイヤー関連のDOM要素
+const fileInput = document.getElementById('fileInput');
+const loadFileButton = document.getElementById('loadFileButton');
+const playPauseButton = document.getElementById('playPauseButton');
+const prevButton = document.getElementById('prevButton');
+const nextButton = document.getElementById('nextButton');
+const repeatButton = document.getElementById('repeatButton');
+const shuffleButton = document.getElementById('shuffleButton');
+const currentSongTitle = document.getElementById('currentSongTitle');
+const playlistElement = document.getElementById('playlist');
+
+// 情報オーバーレイ関連のDOM要素
 const infoTrigger = document.getElementById('infoTrigger');
 const infoOverlay = document.getElementById('infoOverlay');
 const closeInfo = document.getElementById('closeInfo');
 
-// イベントリスナーの設定
+
+// --- イベントリスナーの設定 ---
+// プレイヤー関連のイベント
+loadFileButton.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', handleFiles);
+playPauseButton.addEventListener('click', togglePlayPause);
+prevButton.addEventListener('click', playPrevSong);
+nextButton.addEventListener('click', playNextSong);
+repeatButton.addEventListener('click', toggleRepeatMode);
+shuffleButton.addEventListener('click', toggleShuffle);
+
+audio.addEventListener('ended', handleSongEnd);
+audio.addEventListener('play', () => {
+    isPlaying = true;
+    playPauseButton.textContent = '一時停止';
+});
+audio.addEventListener('pause', () => {
+    isPlaying = false;
+    playPauseButton.textContent = '再生';
+});
+
+// 情報オーバーレイ関連のイベント
 infoTrigger.addEventListener('click', () => {
     infoOverlay.classList.add('show'); // オーバーレイを表示
 });
@@ -29,37 +61,13 @@ infoOverlay.addEventListener('click', (event) => {
         infoOverlay.classList.remove('show');
     }
 });
-// ★ここまで追加★
-const fileInput = document.getElementById('fileInput');
-const loadFileButton = document.getElementById('loadFileButton');
-const playPauseButton = document.getElementById('playPauseButton');
-const prevButton = document.getElementById('prevButton');
-const nextButton = document.getElementById('nextButton');
-const repeatButton = document.getElementById('repeatButton');
-const shuffleButton = document.getElementById('shuffleButton');
-const currentSongTitle = document.getElementById('currentSongTitle');
-const playlistElement = document.getElementById('playlist');
 
-// イベントリスナーの設定
-loadFileButton.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', handleFiles);
-playPauseButton.addEventListener('click', togglePlayPause);
-prevButton.addEventListener('click', playPrevSong);
-nextButton.addEventListener('click', playNextSong);
-repeatButton.addEventListener('click', toggleRepeatMode);
-shuffleButton.addEventListener('click', toggleShuffle);
-audio.addEventListener('ended', handleSongEnd);
-audio.addEventListener('play', () => {
-    isPlaying = true;
-    playPauseButton.textContent = '一時停止';
-});
-audio.addEventListener('pause', () => {
-    isPlaying = false;
-    playPauseButton.textContent = '再生';
-});
 
-// 初期状態のUI更新
+// --- 初期化処理 ---
 updatePlayerControls();
+
+
+// --- 関数定義 ---
 
 // ファイル読み込み処理
 function handleFiles(event) {
