@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const nextButton = document.getElementById('nextButton');
     const repeatButton = document.getElementById('repeatButton');
     const shuffleButton = document.getElementById('shuffleButton');
-    const currentSongTitle = document.getElementById('currentSongTitle');
+    const currentSongTitle = document.getElementById('currentSongTitle'); // ★この行は変わらず
     const playlistElement = document.getElementById('playlist');
 
     // 情報オーバーレイ関連のDOM要素
@@ -118,7 +118,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         playlistElement.innerHTML = ''; // 一度クリア
         if (playlist.length === 0) {
             playlistElement.innerHTML = '<li>Click "Load MP3 Files" to get started.</li>'; // 初期表示テキスト
-            currentSongTitle.textContent = 'No song selected'; // 初期表示テキスト
+            // currentSongTitle が存在する場合のみtextContentを設定
+            if (currentSongTitle) { // ★修正箇所1
+                currentSongTitle.textContent = 'No song selected';
+            }
             return;
         }
 
@@ -127,7 +130,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
             listItem.textContent = song.name;
             if (index === currentSongIndex) {
                 listItem.classList.add('active');
-                currentSongTitle.textContent = song.name;
+                // currentSongTitle が存在する場合のみtextContentを設定
+                if (currentSongTitle) { // ★修正箇所2
+                    currentSongTitle.textContent = song.name;
+                }
             }
             listItem.addEventListener('click', () => {
                 playSpecificSong(index);
@@ -140,7 +146,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function loadSong(index) {
         if (index < 0 || index >= playlist.length) {
             audio.src = '';
-            currentSongTitle.textContent = 'No song selected'; // 初期表示テキスト
+            // currentSongTitle が存在する場合のみtextContentを設定
+            if (currentSongTitle) { // ★修正箇所3
+                currentSongTitle.textContent = 'No song selected';
+            }
             return;
         }
         currentSongIndex = index;
@@ -318,23 +327,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
     function updatePlayerControls() {
         const hasSongs = playlist.length > 0;
 
-        playPauseButton.disabled = !hasSongs;
-        prevButton.disabled = !hasSongs;
-        nextButton.disabled = !hasSongs;
-        repeatButton.disabled = !hasSongs;
-        shuffleButton.disabled = !hasSongs;
+        // nullチェックを追加
+        if (playPauseButton) playPauseButton.disabled = !hasSongs; // ★修正箇所4
+        if (prevButton) prevButton.disabled = !hasSongs;           // ★修正箇所5
+        if (nextButton) nextButton.disabled = !hasSongs;           // ★修正箇所6
+        if (repeatButton) repeatButton.disabled = !hasSongs;       // ★修正箇所7
+        if (shuffleButton) shuffleButton.disabled = !hasSongs;     // ★修正箇所8
         
         // Save/Load/Clearボタンの有効化/無効化（機能はまだ実装していません）
-        saveButton.disabled = !hasSongs;
-        loadButton.disabled = true; // 現時点では未実装のため常に無効
-        clearButton.disabled = !hasSongs;
+        if (saveButton) saveButton.disabled = !hasSongs;           // ★修正箇所9
+        if (loadButton) loadButton.disabled = true;                // ★修正箇所10 (常に無効)
+        if (clearButton) clearButton.disabled = !hasSongs;         // ★修正箇所11
 
-        if (!hasSongs) {
-            playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // 曲がない場合は再生アイコン
-            currentSongTitle.textContent = 'No song selected';
-        } else if (audio.paused && currentSongIndex === -1) {
-            playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // 選択なしで停止中は再生アイコン
-            currentSongTitle.textContent = 'No song selected';
+        if (currentSongTitle) { // ★修正箇所12
+            if (!hasSongs) {
+                playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // 曲がない場合は再生アイコン
+                currentSongTitle.textContent = 'No song selected';
+            } else if (audio.paused && currentSongIndex === -1) {
+                playPauseButton.innerHTML = '<i class="fas fa-play"></i>'; // 選択なしで停止中は再生アイコン
+                currentSongTitle.textContent = 'No song selected';
+            }
         }
     }
 }); // DOMContentLoaded の閉じカッコ
