@@ -44,7 +44,7 @@ button {
     font-size: 16px;
     margin: 5px;
     transition: all 0.2s ease;
-    flex-grow: 1;
+    /* flex-grow: 1; は特定の状況でしか使わないので削除または調整 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 控えめな影 */
     display: flex;
     align-items: center;
@@ -96,8 +96,9 @@ button i.fas {
 /* --- Saved/Load/Clear ボタン --- */
 .saved-controls {
     display: flex;
-    justify-content: space-between; /* ボタン間のスペースを均等に */
+    justify-content: center; /* 中央寄せ */
     margin-bottom: 30px;
+    flex-wrap: wrap; /* 小さい画面で折り返す */
 }
 .saved-controls button {
     background-color: #e0e0e0; /* グレーの背景 */
@@ -106,8 +107,9 @@ button i.fas {
     font-size: 14px;
     border-radius: 6px;
     box-shadow: none;
-    flex: 1; /* 幅を均等に */
-    margin: 0 3px; /* ボタン間のマージン */
+    /* flex: 1; を削除して固定幅に、または flex-basis を使う */
+    min-width: 100px; /* ボタンの最小幅 */
+    margin: 0 5px 10px; /* ボタン間のマージンと下のマージン */
 }
 .saved-controls button:hover {
     background-color: #d0d0d0;
@@ -149,6 +151,7 @@ button i.fas {
     justify-content: center; /* 中央に配置 */
     align-items: center; /* 垂直方向中央揃え */
     margin-bottom: 20px; /* 下のマージン */
+    /*flex-wrap: wrap; /* 画面が狭い時に折り返す */
 }
 .playback-controls button.round-button {
     width: 60px; /* 丸ボタンのサイズ */
@@ -157,19 +160,18 @@ button i.fas {
     padding: 0; /* パディングをなくす */
     margin: 0 8px; /* 横の間隔 */
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); /* 少し強めの影 */
-    background-color: #000; /* 黒の背景 */
-    color: white; /* 白いアイコン */
+    background-color: #e0e0e0; /* グレーの背景 */
+    color: #555; /* アイコンの色 */
     flex-shrink: 0; /* 幅が縮まないように */
 }
 .playback-controls button.round-button:hover {
-    background-color: #333;
+    background-color: #d0d0d0;
 }
 .playback-controls button.round-button:active {
-    background-color: #1a1a1a;
+    background-color: #c0c0c0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     transform: translateY(1px);
 }
-
 .playback-controls button.round-button i.fas {
     font-size: 28px; /* アイコンを大きく */
     margin-right: 0; /* テキストがないので余白不要 */
@@ -179,6 +181,8 @@ button i.fas {
 #playPauseButton.main-play-button {
     width: 70px; /* 少し大きく */
     height: 70px;
+}
+#playPauseButton.main-play-button i.fas {
     font-size: 32px; /* アイコンも大きく */
 }
 
@@ -189,6 +193,7 @@ button i.fas {
     justify-content: center; /* 中央に配置 */
     align-items: center;
     margin-bottom: 30px; /* 下のマージン */
+    flex-wrap: wrap; /* 画面が狭い時に折り返す */
 }
 .mode-controls-row button.small-text-button {
     background-color: #e0e0e0; /* デフォルトはグレー */
@@ -198,6 +203,7 @@ button i.fas {
     border-radius: 6px;
     box-shadow: none; /* 影なし */
     margin: 0 8px; /* ボタン間の横マージン */
+    min-width: 80px; /* 最小幅を設定 */
 }
 .mode-controls-row button.small-text-button:hover {
     background-color: #d0d0d0;
