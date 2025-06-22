@@ -48,6 +48,10 @@ button {
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2); /* 外と内の影 */
     text-transform: uppercase; /* 大文字 */
     font-weight: bold;
+    /* アイコンとテキストを並べるためにflexboxを使用 */
+    display: flex;
+    align-items: center; /* 垂直方向中央揃え */
+    justify-content: center; /* 水平方向中央揃え */
 }
 
 button:hover {
@@ -70,6 +74,12 @@ button:disabled {
     transform: none;
 }
 
+/* アイコン自体のスタイル調整 */
+button i.fas {
+    font-size: 20px; /* アイコンのサイズを大きくする */
+    margin-right: 5px; /* テキストがあるボタンの場合、アイコンとテキストの間に余白 */
+}
+
 /* --- トップコントロール（ファイル読み込み） --- */
 .controls-top {
     margin-bottom: 30px;
@@ -87,6 +97,10 @@ button:disabled {
 #loadFileButton:active {
     background: linear-gradient(to top, #28a745, #1e7e34);
 }
+#loadFileButton i.fas { /* 「MP3ファイルを読み込む」ボタンにアイコンがある場合は調整 */
+    margin-right: 8px;
+}
+
 
 /* --- 現在の曲表示パネル --- */
 .current-song {
@@ -132,6 +146,11 @@ button:disabled {
 #playPauseButton {
     padding: 12px 30px; /* 再生ボタンを少し大きく */
 }
+/* 再生/一時停止/次へ/前へボタンはアイコンのみなので、アイコンを中央に大きく */
+.playback-controls button i.fas {
+    font-size: 24px; /* アイコンをさらに大きく */
+    margin-right: 0; /* テキストがないので余白不要 */
+}
 
 
 /* --- リピート・シャッフルボタン --- */
@@ -144,10 +163,15 @@ button:disabled {
     color: #fff;
 }
 .mode-controls button.active:hover {
-    background: linear: linear-gradient(to bottom, #218838, #1c6d2f);
+    background: linear-gradient(to bottom, #218838, #1c6d2f);
 }
 .mode-controls button.active:active {
     background: linear-gradient(to top, #28a745, #1e7e34);
+}
+/* リピート・シャッフルボタン内のアイコンとテキストの間隔 */
+.mode-controls button i.fas {
+    margin-right: 8px;
+    font-size: 20px;
 }
 
 
