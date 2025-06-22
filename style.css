@@ -1,136 +1,190 @@
+/* --- グローバル設定とリセット --- */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* モダンなフォント */
+    background: linear-gradient(to bottom right, #343a40, #1a1e22); /* 暗めのグラデーション背景 */
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* 上部に寄せる */
+    align-items: center; /* 画面中央に配置 */
     min-height: 100vh;
-    margin: 20px; /* 全体に余白を追加 */
+    margin: 0;
     box-sizing: border-box;
+    color: #e0e0e0; /* 全体的な文字色 */
 }
 
+/* --- プレイヤーコンテナ --- */
 .player-container {
-    background-color: #fff;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(to bottom, #4a4a4a, #2a2a2a); /* メタル感のあるグラデーション */
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 2px 5px rgba(255, 255, 255, 0.1); /* 深い影と内側の光沢 */
     width: 100%;
-    max-width: 400px;
+    max-width: 450px; /* 少し大きくする */
     text-align: center;
-    border: 1px solid #ddd; /* 枠線を追加 */
-    position: relative; /* 子要素のinfo-overlay-triggerをposition: absoluteで配置するため */
+    border: 1px solid #5a5a5a; /* エッジの強調 */
+    position: relative;
+    box-sizing: border-box; /* パディングとボーダーを幅に含める */
 }
 
 h1 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 24px;
+    color: #e0e0e0;
+    margin-bottom: 25px;
+    font-size: 28px;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.7); /* テキストに影 */
+    letter-spacing: 1.5px; /* 文字間隔 */
 }
 
+/* --- ボタンの基本スタイル --- */
 button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 15px;
+    background: linear-gradient(to bottom, #6c757d, #4a4a4a); /* 立体的なボタン */
+    color: #e0e0e0;
+    padding: 12px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px; /* 角を少し丸める */
     cursor: pointer;
-    font-size: 16px;
-    margin: 5px;
-    transition: background-color 0.2s;
-    flex-grow: 1; /* ボタンが均等な幅になるように */
+    font-size: 17px;
+    margin: 7px;
+    transition: all 0.2s ease; /* ホバーやクリック時のアニメーション */
+    flex-grow: 1;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2); /* 外と内の影 */
+    text-transform: uppercase; /* 大文字 */
+    font-weight: bold;
 }
 
 button:hover {
-    background-color: #45a049;
+    background: linear-gradient(to bottom, #7a8288, #5a5a5a);
+    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px); /* 少し浮き上がる */
+}
+
+button:active {
+    background: linear-gradient(to top, #6c757d, #4a4a4a); /* 押し込み感 */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), inset 0 1px 3px rgba(0, 0, 0, 0.3);
+    transform: translateY(1px); /* 押し込まれる */
 }
 
 button:disabled {
-    background-color: #cccccc;
+    background: #3a3a3a;
+    color: #888;
     cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
 
+/* --- トップコントロール（ファイル読み込み） --- */
 .controls-top {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
+#loadFileButton {
+    background: linear-gradient(to bottom, #28a745, #1e7e34); /* 緑系の強調色 */
+    padding: 15px 25px;
+    font-size: 18px;
+    border-radius: 10px;
+}
+#loadFileButton:hover {
+    background: linear-gradient(to bottom, #218838, #1c6d2f);
+}
+#loadFileButton:active {
+    background: linear-gradient(to top, #28a745, #1e7e34);
+}
+
+/* --- 現在の曲表示パネル --- */
 .current-song {
-    margin-bottom: 20px;
-    background-color: #e9e9e9;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+    background-color: #1a1a1a; /* 暗い背景 */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #333;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5), 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .current-song p {
     margin: 0;
-    color: #555;
-    font-size: 1.1em;
+    color: #00ff00; /* デジタル表示風の緑色 */
+    font-size: 1.5em; /* 大きめに */
+    font-family: 'Lucida Console', 'Courier New', monospace; /* デジタルフォント風 */
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.7); /* グロー効果 */
 }
 
 #currentSongTitle {
     font-weight: bold;
-    color: #333;
+    /* 色とフォントは親から継承 */
 }
 
+/* --- 再生コントロールボタン --- */
 .playback-controls,
 .mode-controls {
     display: flex;
     justify-content: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .playback-controls button {
-    background-color: #007bff;
+    background: linear-gradient(to bottom, #007bff, #0056b3); /* 青系のボタン */
+    font-size: 18px;
 }
-
 .playback-controls button:hover {
-    background-color: #0056b3;
+    background: linear-gradient(to bottom, #0069d9, #004085);
+}
+.playback-controls button:active {
+    background: linear-gradient(to top, #007bff, #0056b3);
+}
+#playPauseButton {
+    padding: 12px 30px; /* 再生ボタンを少し大きく */
 }
 
+
+/* --- リピート・シャッフルボタン --- */
 .mode-controls button {
-    background-color: #6c757d;
+    background: linear-gradient(to bottom, #6c757d, #4a4a4a);
 }
 
 .mode-controls button.active {
-    background-color: #28a745; /* アクティブ時の色 */
-    font-weight: bold;
+    background: linear-gradient(to bottom, #28a745, #1e7e34); /* アクティブ時は緑色 */
+    color: #fff;
+}
+.mode-controls button.active:hover {
+    background: linear: linear-gradient(to bottom, #218838, #1c6d2f);
+}
+.mode-controls button.active:active {
+    background: linear-gradient(to top, #28a745, #1e7e34);
 }
 
-.mode-controls button:hover {
-    background-color: #5a6268;
-}
 
+/* --- プレイリストコンテナ --- */
 .playlist-container {
-    margin-top: 25px;
-    border-top: 1px solid #eee;
-    padding-top: 20px;
+    margin-top: 30px;
+    border-top: 1px solid #666; /* 上部の区切り線 */
+    padding-top: 25px;
 }
 
 .playlist-container h2 {
-    color: #333;
-    margin-bottom: 15px;
-    font-size: 20px;
+    color: #e0e0e0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 #playlist {
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 250px; /* プレイリストの高さ制限 */
-    overflow-y: auto; /* スクロール可能にする */
-    border: 1px solid #eee;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    max-height: 280px; /* プレイリストの高さ */
+    overflow-y: auto;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background-color: #1a1a1a; /* 暗い背景 */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 #playlist li {
-    padding: 10px 15px;
-    border-bottom: 1px solid #eee;
+    padding: 12px 18px;
+    border-bottom: 1px solid #2a2a2a; /* 薄い区切り線 */
     text-align: left;
     cursor: pointer;
-    color: #555;
-    transition: background-color 0.2s;
-    font-size: 0.95em;
+    color: #b0b0b0; /* 薄めの文字色 */
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 1em;
 }
 
 #playlist li:last-child {
@@ -138,117 +192,130 @@ button:disabled {
 }
 
 #playlist li:hover {
-    background-color: #e0e0e0;
+    background-color: #2c2c2c; /* ホバー時の色 */
+    color: #fff;
 }
 
 #playlist li.active {
-    background-color: #d1ecf1;
+    background-color: #004d80; /* アクティブな曲の強調色 */
     font-weight: bold;
-    color: #0c5460;
+    color: #fff;
+    box-shadow: inset 0 0 5px rgba(0, 123, 255, 0.5); /* 内側に青い光 */
 }
 
 
 /* --- 情報アイコンとオーバーレイのスタイル --- */
-/* 情報アイコンのトリガー */
 .info-overlay-trigger {
     position: absolute; /* 親要素 .player-container に対して相対的に配置 */
     top: 10px; /* 上からの位置 */
     right: 10px; /* 右からの位置 */
-    width: 30px;
-    height: 30px;
-    background-color: rgba(0, 0, 0, 0.6); /* 半透明の黒背景 */
+    width: 35px; /* 少し大きく */
+    height: 35px;
+    background: radial-gradient(circle, #ffc107, #e0a800); /* 黄色のグラデーション */
     border-radius: 50%; /* 円形 */
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    z-index: 1000; /* 最前面に表示 */
-    transition: background-color 0.3s;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
 }
 
 .info-overlay-trigger:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+    background: radial-gradient(circle, #ffe066, #ffc107);
+    transform: scale(1.05); /* 少し拡大 */
+}
+
+.info-overlay-trigger:active {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), inset 0 1px 3px rgba(0, 0, 0, 0.3);
+    transform: scale(0.98);
 }
 
 .info-overlay-trigger .info-icon {
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    line-height: 1; /* アイコンを中央揃えにするため */
+    color: #333; /* 暗めの「i」 */
+    font-size: 22px; /* 少し大きく */
+    font-weight: bolder;
+    line-height: 1;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
-/* オーバーレイ（注意文）のスタイル */
 .info-overlay {
-    position: fixed; /* 画面全体を覆う */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* 半透明の黒 */
+    background-color: rgba(0, 0, 0, 0.85); /* より暗い半透明 */
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1001; /* アイコンより前面 */
-    opacity: 0; /* 最初は透明で非表示 */
-    visibility: hidden; /* DOMからも隠す */
-    transition: opacity 0.3s ease, visibility 0.3s ease; /* アニメーション */
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease; /* フェードの時間を長く */
 }
 
 .info-overlay.show {
-    opacity: 1; /* 表示時に不透明に */
-    visibility: visible; /* 表示 */
+    opacity: 1;
+    visibility: visible;
 }
 
 .info-content {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    max-width: 600px;
+    background: linear-gradient(to bottom, #e0e0e0, #c0c0c0); /* 明るいパネル */
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), inset 0 2px 5px rgba(255, 255, 255, 0.4);
+    max-width: 650px; /* 少し広く */
     width: 90%;
-    max-height: 80vh; /* 高さ制限 */
-    overflow-y: auto; /* 内容が多い場合にスクロール */
+    max-height: 85vh;
+    overflow-y: auto;
     position: relative;
     color: #333;
-    text-align: left; /* テキストは左揃えに */
+    text-align: left;
+    border: 1px solid #aaa;
 }
 
 .info-content h2 {
     text-align: center;
-    margin-bottom: 20px;
-    color: #007bff;
-    font-size: 22px;
+    margin-bottom: 25px;
+    color: #343a40; /* 濃いめのタイトル */
+    font-size: 26px;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 .info-content h3 {
-    margin-top: 15px;
-    margin-bottom: 5px;
-    font-size: 18px;
-    color: #555;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 20px;
+    color: #495057;
+    text-shadow: 0 0.5px 0.5px rgba(255, 255, 255, 0.3);
 }
 
 .info-content p, .info-content ul {
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+    color: #444;
 }
 
 .info-content ul {
     list-style-type: disc;
-    padding-left: 25px;
+    padding-left: 30px;
 }
 
 .info-content ul li {
-    margin-bottom: 5px;
+    margin-bottom: 7px;
 }
 
 .info-content .close-button {
     position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 30px;
+    top: 12px;
+    right: 18px;
+    font-size: 35px;
     cursor: pointer;
     color: #666;
     transition: color 0.2s;
+    font-weight: lighter; /* ×を少し細く */
 }
 
 .info-content .close-button:hover {
