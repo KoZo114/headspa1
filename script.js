@@ -7,6 +7,29 @@ let repeatMode = 'none'; // 'none', 'one', 'all'
 let isShuffling = false;
 
 // DOM要素の取得
+// ★ここから追加★
+// 新しいDOM要素の取得
+const infoTrigger = document.getElementById('infoTrigger');
+const infoOverlay = document.getElementById('infoOverlay');
+const closeInfo = document.getElementById('closeInfo');
+
+// イベントリスナーの設定
+infoTrigger.addEventListener('click', () => {
+    infoOverlay.classList.add('show'); // オーバーレイを表示
+});
+
+closeInfo.addEventListener('click', () => {
+    infoOverlay.classList.remove('show'); // オーバーレイを非表示
+});
+
+// オーバーレイの背景をクリックしても閉じるようにする (オプション)
+infoOverlay.addEventListener('click', (event) => {
+    // クリックされた要素がオーバーレイ自体であれば閉じる
+    if (event.target === infoOverlay) {
+        infoOverlay.classList.remove('show');
+    }
+});
+// ★ここまで追加★
 const fileInput = document.getElementById('fileInput');
 const loadFileButton = document.getElementById('loadFileButton');
 const playPauseButton = document.getElementById('playPauseButton');
