@@ -77,7 +77,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     // ファイル読み込み処理
     function handleFiles(event) {
-        const files = Array.from(event.target.files).filter(file => file.type === 'audio/mpeg'); // MP3のみをフィルタ
+        const files = Array.from(event.target.files).filter(file => {
+            const type = file.type.toLowerCase();
+            return type === 'audio/mpeg' || type === 'audio/mp3' || file.name.toLowerCase().endsWith('.mp3');
+        });
         if (files.length === 0) return;
 
         if (playlist.length + files.length > 20) {
