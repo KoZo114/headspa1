@@ -1,0 +1,147 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 上部に寄せる */
+    min-height: 100vh;
+    margin: 20px; /* 全体に余白を追加 */
+    box-sizing: border-box;
+}
+
+.player-container {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid #ddd; /* 枠線を追加 */
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+    transition: background-color 0.2s;
+    flex-grow: 1; /* ボタンが均等な幅になるように */
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.controls-top {
+    margin-bottom: 20px;
+}
+
+.current-song {
+    margin-bottom: 20px;
+    background-color: #e9e9e9;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.current-song p {
+    margin: 0;
+    color: #555;
+    font-size: 1.1em;
+}
+
+#currentSongTitle {
+    font-weight: bold;
+    color: #333;
+}
+
+.playback-controls,
+.mode-controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.playback-controls button {
+    background-color: #007bff;
+}
+
+.playback-controls button:hover {
+    background-color: #0056b3;
+}
+
+.mode-controls button {
+    background-color: #6c757d;
+}
+
+.mode-controls button.active {
+    background-color: #28a745; /* アクティブ時の色 */
+    font-weight: bold;
+}
+
+.mode-controls button:hover {
+    background-color: #5a6268;
+}
+
+.playlist-container {
+    margin-top: 25px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.playlist-container h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+#playlist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 250px; /* プレイリストの高さ制限 */
+    overflow-y: auto; /* スクロール可能にする */
+    border: 1px solid #eee;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#playlist li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    cursor: pointer;
+    color: #555;
+    transition: background-color 0.2s;
+    font-size: 0.95em;
+}
+
+#playlist li:last-child {
+    border-bottom: none;
+}
+
+#playlist li:hover {
+    background-color: #e0e0e0;
+}
+
+#playlist li.active {
+    background-color: #d1ecf1;
+    font-weight: bold;
+    color: #0c5460;
+}
