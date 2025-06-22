@@ -4,11 +4,11 @@ body {
     background-color: #f0f2f5; /* 明るい背景色 */
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* 画面上部に寄せる */
+    align-items: center; /* 画面中央に配置 */
     min-height: 100vh;
     margin: 0;
     box-sizing: border-box;
-    padding-top: 30px; /* 全体的に少し下に配置 */
+    padding: 20px; /* 全体の余白 */
 }
 
 /* --- プレイヤーコンテナ --- */
@@ -32,24 +32,6 @@ h1 {
     font-size: 24px;
     font-weight: 600; /* 少し太く */
 }
-
-/* --- 上部の「ご利用前の注意事項」ダミーテキスト --- */
-.attention-text {
-    position: absolute;
-    top: 15px;
-    left: 20px;
-    font-size: 14px;
-    color: #666;
-    display: flex;
-    align-items: center;
-    cursor: pointer; /* クリック可能な雰囲気 */
-    user-select: none; /* テキスト選択不可に */
-}
-.attention-text i {
-    margin-left: 5px;
-    font-size: 12px;
-}
-
 
 /* --- ボタンの基本スタイル --- */
 button {
@@ -114,7 +96,7 @@ button i.fas {
 /* --- Saved/Load/Clear ボタン --- */
 .saved-controls {
     display: flex;
-    justify-content: center;
+    justify-content: space-between; /* ボタン間のスペースを均等に */
     margin-bottom: 30px;
 }
 .saved-controls button {
@@ -124,6 +106,8 @@ button i.fas {
     font-size: 14px;
     border-radius: 6px;
     box-shadow: none;
+    flex: 1; /* 幅を均等に */
+    margin: 0 3px; /* ボタン間のマージン */
 }
 .saved-controls button:hover {
     background-color: #d0d0d0;
@@ -135,7 +119,6 @@ button i.fas {
     font-size: 16px;
     margin-right: 6px;
 }
-/* disabled状態は基本スタイルで対応 */
 
 
 /* --- 現在の曲表示パネル --- */
@@ -162,7 +145,10 @@ button i.fas {
 
 /* --- 再生コントロールボタン (丸いボタン) --- */
 .playback-controls {
-    margin-bottom: 30px;
+    display: flex; /* 横並びにする */
+    justify-content: center; /* 中央に配置 */
+    align-items: center; /* 垂直方向中央揃え */
+    margin-bottom: 20px; /* 下のマージン */
 }
 .playback-controls button.round-button {
     width: 60px; /* 丸ボタンのサイズ */
@@ -171,7 +157,19 @@ button i.fas {
     padding: 0; /* パディングをなくす */
     margin: 0 8px; /* 横の間隔 */
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); /* 少し強めの影 */
+    background-color: #000; /* 黒の背景 */
+    color: white; /* 白いアイコン */
+    flex-shrink: 0; /* 幅が縮まないように */
 }
+.playback-controls button.round-button:hover {
+    background-color: #333;
+}
+.playback-controls button.round-button:active {
+    background-color: #1a1a1a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transform: translateY(1px);
+}
+
 .playback-controls button.round-button i.fas {
     font-size: 28px; /* アイコンを大きく */
     margin-right: 0; /* テキストがないので余白不要 */
@@ -186,40 +184,40 @@ button i.fas {
 
 
 /* --- リピート・シャッフルボタン (アイコン+テキスト) --- */
-.mode-controls {
-    margin-bottom: 30px;
+.mode-controls-row { /* 新しいクラス名 */
+    display: flex; /* 横並びにする */
+    justify-content: center; /* 中央に配置 */
+    align-items: center;
+    margin-bottom: 30px; /* 下のマージン */
 }
-.mode-controls button.small-text-button {
+.mode-controls-row button.small-text-button {
     background-color: #e0e0e0; /* デフォルトはグレー */
     color: #666;
     padding: 8px 15px; /* パディングを小さく */
     font-size: 14px; /* フォントサイズも小さく */
     border-radius: 6px;
     box-shadow: none; /* 影なし */
+    margin: 0 8px; /* ボタン間の横マージン */
 }
-.mode-controls button.small-text-button:hover {
+.mode-controls-row button.small-text-button:hover {
     background-color: #d0d0d0;
 }
-.mode-controls button.small-text-button:active {
+.mode-controls-row button.small-text-button:active {
     background-color: #c0c0c0;
 }
-.mode-controls button.small-text-button i.fas {
-    font-size: 16px; /* アイコンサイズ */
-    margin-right: 6px;
-}
-.mode-controls button.active.small-text-button {
+.mode-controls-row button.active.small-text-button {
     background-color: #28a745; /* アクティブ時は緑色 */
     color: #fff;
 }
-.mode-controls button.active.small-text-button:hover {
+.mode-controls-row button.active.small-text-button:hover {
     background-color: #218838;
 }
-.mode-controls button.active.small-text-button:active {
+.mode-controls-row button.active.small-text-button:active {
     background-color: #1e7e34;
 }
 
 /* リピート・シャッフルの「OFF」「ON」テキストのスタイル */
-.mode-controls button .mode-text {
+.mode-controls-row button .mode-text {
     font-size: 0.9em; /* アイコンの横のテキストを少し小さく */
     font-weight: normal;
     text-transform: none; /* 大文字にしない */
