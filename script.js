@@ -1,16 +1,15 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    // --- グローバル変数・定数の宣言 ---
+document.addEventListener('DOMContentLoaded', () => {
     const audio = new Audio();
     let playlist = [];
-    let originalPlaylist = []; // シャッフル前の元のプレイリスト
+    let originalPlaylist = [];
     let currentSongIndex = -1;
     let isPlaying = false;
     let repeatMode = 'none'; // 'none', 'one', 'all'
     let isShuffling = false;
 
-    // --- DOM要素の取得 ---
     const fileInput = document.getElementById('fileInput');
     const loadFileButton = document.getElementById('loadFileButton');
+    const clearPlaylistButton = document.getElementById('clearPlaylistButton');
     const playPauseButton = document.getElementById('playPauseButton');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
@@ -18,20 +17,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const shuffleButton = document.getElementById('shuffleButton');
     const currentSongTitle = document.getElementById('currentSongTitle');
     const playlistElement = document.getElementById('playlist');
-    const infoTrigger = document.getElementById('infoTrigger');
+    const infoButton = document.getElementById('infoButton');
     const infoOverlay = document.getElementById('infoOverlay');
     const closeInfo = document.getElementById('closeInfo');
-    const clearButton = document.getElementById('clearButton');
+    const artworkContainer = document.querySelector('.song-artwork');
 
-    // --- イベントリスナーの設定 ---
+    // Event Listeners
     loadFileButton.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', handleFiles);
+    clearPlaylistButton.addEventListener('click', clearPlaylist);
     playPauseButton.addEventListener('click', togglePlayPause);
     prevButton.addEventListener('click', playPrevSong);
     nextButton.addEventListener('click', playNextSong);
     repeatButton.addEventListener('click', toggleRepeatMode);
     shuffleButton.addEventListener('click', toggleShuffle);
-    if (clearButton) clearButton.addEventListener('click', clearPlaylist);
     audio.addEventListener('ended', handleSongEnd);
     audio.addEventListener('play', () => {
         isPlaying = true;
@@ -41,95 +40,59 @@ document.addEventListener('DOMContentLoaded', async () => {
         isPlaying = false;
         playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
     });
-    infoTrigger.addEventListener('click', () => infoOverlay.classList.add('show'));
+    infoButton.addEventListener('click', () => infoOverlay.classList.add('show'));
     closeInfo.addEventListener('click', () => infoOverlay.classList.remove('show'));
-    infoOverlay.addEventListener('click', (event) => {
-        if (event.target === infoOverlay) {
+    infoOverlay.addEventListener('click', (e) => {
+        if (e.target === infoOverlay) {
             infoOverlay.classList.remove('show');
         }
     });
 
-    // --- 初期化処理 ---
-    await openDB();
-    await loadSongsFromDB();
-    updatePlayerControls();
-
-    // --- 関数定義 ---
-
-    async function loadSongsFromDB() {
-        const songs = await getAllSongs();
-        playlist = songs.map(song => ({
-            ...song,
-            url: URL.createObjectURL(song.file)
-        }));
-        originalPlaylist = [...playlist];
-        updatePlaylistUI();
-        updatePlayerControls();
-    }
-
-    async function handleFiles(event) {
-        const files = Array.from(event.target.files).filter(file => {
-            const type = file.type.toLowerCase();
-            return type === 'audio/mpeg' || type === 'audio/mp3' || file.name.toLowerCase().endsWith('.mp3');
-        });
+    function handleFiles(event) {
+        const files = Array.from(event.target.files).filter(file => file.type === 'audio/mpeg');
         if (files.length === 0) return;
 
         if (playlist.length + files.length > 30) {
-            alert('読み込める楽曲は合計30曲までです。');
+            alert('You can load up to 30 songs in total.');
             return;
         }
 
-        for (const file of files) {
-            const song = { name: file.name, file: file };
-            const id = await addSong(song);
-            playlist.push({ ...song, id, url: URL.createObjectURL(file) });
-        }
+        const newSongs = files.map(file => ({
+            name: file.name.replace('.mp3', ''),
+            url: URL.createObjectURL(file),
+            file: file,
+            artwork: null
+        }));
 
+        playlist = [...playlist, ...newSongs];
         originalPlaylist = [...playlist];
+
         if (isShuffling) {
             shufflePlaylist();
         }
 
         updatePlaylistUI();
+        updatePlayerControls();
 
         if (currentSongIndex === -1 && playlist.length > 0) {
-            currentSongIndex = 0;
-            loadSong(currentSongIndex);
-            playSong();
-        } else if (playlist.length > 0 && !isPlaying) {
-            loadSong(currentSongIndex);
+            playSpecificSong(0);
         }
-        updatePlayerControls();
     }
 
     function updatePlaylistUI() {
         playlistElement.innerHTML = '';
         if (playlist.length === 0) {
-            playlistElement.innerHTML = '<li>Click "Load MP3 Files" to get started.</li>';
-            if (currentSongTitle) {
-                currentSongTitle.textContent = 'No song selected';
-            }
+            playlistElement.innerHTML = '<li class="empty-playlist-message">Add songs to get started</li>';
+            currentSongTitle.textContent = 'No song selected';
+            resetArtwork();
             return;
         }
 
         playlist.forEach((song, index) => {
             const listItem = document.createElement('li');
-            const titleSpan = document.createElement('span');
-            titleSpan.textContent = song.name;
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-button';
-            deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                removeSong(index);
-            });
-            listItem.appendChild(titleSpan);
-            listItem.appendChild(deleteBtn);
+            listItem.textContent = song.name;
             if (index === currentSongIndex) {
                 listItem.classList.add('active');
-                if (currentSongTitle) {
-                    currentSongTitle.textContent = song.name;
-                }
             }
             listItem.addEventListener('click', () => {
                 playSpecificSong(index);
@@ -139,42 +102,48 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function loadSong(index) {
-        if (index < 0 || index >= playlist.length) {
-            audio.src = '';
-            if (currentSongTitle) {
-                currentSongTitle.textContent = 'No song selected';
-            }
-            return;
-        }
+        if (index < 0 || index >= playlist.length) return;
         currentSongIndex = index;
         const song = playlist[currentSongIndex];
-        // If the URL is revoked, create a new one
-        if (!song.url.startsWith('blob:')) {
-             song.url = URL.createObjectURL(song.file);
-        }
         audio.src = song.url;
+        currentSongTitle.textContent = song.name;
+        updateArtwork(song);
         updatePlaylistUI();
     }
 
-    function togglePlayPause() {
-        if (playlist.length === 0) {
-            alert('まずMP3ファイルを読み込んでください。');
+    function updateArtwork(song) {
+        if (song.artwork) {
+            artworkContainer.innerHTML = `<img src="${song.artwork}" alt="Artwork">`;
             return;
         }
-        if (currentSongIndex === -1) {
-            currentSongIndex = 0;
-            loadSong(currentSongIndex);
-        }
-        if (audio.paused) {
-            playSong();
-        } else {
-            pauseSong();
-        }
-        updatePlayerControls();
+
+        resetArtwork();
+
+        window.jsmediatags.read(song.file, {
+            onSuccess: function(tag) {
+                const { data, format } = tag.tags.picture || {};
+                if (data) {
+                    let base64String = "";
+                    for (let i = 0; i < data.length; i++) {
+                        base64String += String.fromCharCode(data[i]);
+                    }
+                    const artworkUrl = `data:${format};base64,${window.btoa(base64String)}`;
+                    song.artwork = artworkUrl;
+                    artworkContainer.innerHTML = `<img src="${artworkUrl}" alt="Artwork">`;
+                }
+            },
+            onError: function(error) {
+                console.error('Error reading media tags:', error);
+            }
+        });
+    }
+
+    function resetArtwork() {
+        artworkContainer.innerHTML = '<i class="fas fa-music default-icon"></i>';
     }
 
     function playSong() {
-        if (audio.src) {
+        if (currentSongIndex !== -1) {
             audio.play();
         }
     }
@@ -183,16 +152,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         audio.pause();
     }
 
-    function playSpecificSong(index) {
-        if (index === currentSongIndex && isPlaying) {
+    function togglePlayPause() {
+        if (playlist.length === 0) return;
+        if (isPlaying) {
             pauseSong();
-        } else if (index === currentSongIndex && !isPlaying) {
-            playSong();
         } else {
-            loadSong(index);
-            playSong();
+            if (currentSongIndex === -1) {
+                playSpecificSong(0);
+            } else {
+                playSong();
+            }
         }
-        updatePlayerControls();
+    }
+
+    function playSpecificSong(index) {
+        loadSong(index);
+        playSong();
     }
 
     function playPrevSong() {
@@ -201,9 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (newIndex < 0) {
             newIndex = playlist.length - 1;
         }
-        loadSong(newIndex);
-        playSong();
-        updatePlayerControls();
+        playSpecificSong(newIndex);
     }
 
     function playNextSong() {
@@ -212,9 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (newIndex >= playlist.length) {
             newIndex = 0;
         }
-        loadSong(newIndex);
-        playSong();
-        updatePlayerControls();
+        playSpecificSong(newIndex);
     }
 
     function handleSongEnd() {
@@ -223,54 +194,56 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else if (repeatMode === 'all') {
             playNextSong();
         } else {
-            let nextIndex = currentSongIndex + 1;
-            if (nextIndex < playlist.length) {
+            if (currentSongIndex < playlist.length - 1) {
                 playNextSong();
             } else {
                 pauseSong();
-                loadSong(-1);
-                updatePlayerControls();
+                currentSongIndex = -1;
+                updatePlaylistUI();
+                currentSongTitle.textContent = 'No song selected';
+                resetArtwork();
             }
         }
     }
 
     function toggleRepeatMode() {
+        const icon = repeatButton.querySelector('i');
         if (repeatMode === 'none') {
-            repeatMode = 'one';
-            repeatButton.innerHTML = '<i class="fas fa-sync-alt"></i><span class="mode-text">1曲</span>';
-            repeatButton.classList.add('active');
-        } else if (repeatMode === 'one') {
             repeatMode = 'all';
-            repeatButton.innerHTML = '<i class="fas fa-sync-alt"></i><span class="mode-text">全曲</span>';
             repeatButton.classList.add('active');
+            icon.classList.remove('fa-sync-alt');
+            icon.classList.add('fa-repeat');
+        } else if (repeatMode === 'all') {
+            repeatMode = 'one';
+            repeatButton.classList.add('active');
+            icon.classList.remove('fa-repeat');
+            icon.classList.add('fa-repeat-1');
         } else {
             repeatMode = 'none';
-            repeatButton.innerHTML = '<i class="fas fa-sync-alt"></i><span class="mode-text">OFF</span>';
             repeatButton.classList.remove('active');
+            icon.classList.remove('fa-repeat-1');
+            icon.classList.add('fa-sync-alt');
         }
-        updatePlayerControls();
     }
+
 
     function toggleShuffle() {
         isShuffling = !isShuffling;
+        shuffleButton.classList.toggle('active', isShuffling);
+
         if (isShuffling) {
-            shuffleButton.innerHTML = '<i class="fas fa-random"></i><span class="mode-text">ON</span>';
-            shuffleButton.classList.add('active');
             shufflePlaylist();
         } else {
-            shuffleButton.innerHTML = '<i class="fas fa-random"></i><span class="mode-text">OFF</span>';
-            shuffleButton.classList.remove('active');
             unshufflePlaylist();
         }
         updatePlaylistUI();
-        updatePlayerControls();
     }
 
     function shufflePlaylist() {
         const currentSong = playlist[currentSongIndex];
         let tempPlaylist = [...originalPlaylist];
         if (currentSong) {
-            tempPlaylist = tempPlaylist.filter(song => song.id !== currentSong.id);
+            tempPlaylist = tempPlaylist.filter(song => song.url !== currentSong.url);
         }
         for (let i = tempPlaylist.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -286,45 +259,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function unshufflePlaylist() {
-        const currentSongId = playlist[currentSongIndex] ? playlist[currentSongIndex].id : null;
+        const currentSongUrl = playlist[currentSongIndex] ? playlist[currentSongIndex].url : null;
         playlist = [...originalPlaylist];
-        if (currentSongId) {
-            currentSongIndex = playlist.findIndex(song => song.id === currentSongId);
-            if (currentSongIndex === -1) {
-                currentSongIndex = 0;
+        if (currentSongUrl) {
+            currentSongIndex = playlist.findIndex(song => song.url === currentSongUrl);
+        }
+    }
+
+    function clearPlaylist() {
+        playlist.forEach(song => {
+            URL.revokeObjectURL(song.url);
+            if (song.artwork) {
+                URL.revokeObjectURL(song.artwork);
             }
-        } else {
-            currentSongIndex = -1;
-        }
-    }
-
-    async function removeSong(index) {
-        const song = playlist[index];
-        if (!song) return;
-
-        URL.revokeObjectURL(song.url);
-        await deleteSong(song.id);
-
-        playlist.splice(index, 1);
-        const originalIndex = originalPlaylist.findIndex(s => s.id === song.id);
-        if (originalIndex !== -1) {
-            originalPlaylist.splice(originalIndex, 1);
-        }
-
-        if (currentSongIndex === index) {
-            pauseSong();
-            currentSongIndex = -1;
-        } else if (index < currentSongIndex) {
-            currentSongIndex -= 1;
-        }
-
-        updatePlaylistUI();
-        updatePlayerControls();
-    }
-
-    async function clearPlaylist() {
-        playlist.forEach(song => URL.revokeObjectURL(song.url));
-        await clearAllSongs();
+        });
         playlist = [];
         originalPlaylist = [];
         currentSongIndex = -1;
@@ -336,21 +284,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function updatePlayerControls() {
         const hasSongs = playlist.length > 0;
-        if (playPauseButton) playPauseButton.disabled = !hasSongs;
-        if (prevButton) prevButton.disabled = !hasSongs;
-        if (nextButton) nextButton.disabled = !hasSongs;
-        if (repeatButton) repeatButton.disabled = !hasSongs;
-        if (shuffleButton) shuffleButton.disabled = !hasSongs;
-        if (clearButton) clearButton.disabled = !hasSongs;
-
-        if (currentSongTitle) {
-            if (!hasSongs) {
-                playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-                currentSongTitle.textContent = 'No song selected';
-            } else if (audio.paused && currentSongIndex === -1) {
-                playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
-                currentSongTitle.textContent = 'No song selected';
-            }
-        }
+        prevButton.disabled = !hasSongs;
+        nextButton.disabled = !hasSongs;
+        playPauseButton.disabled = !hasSongs;
+        clearPlaylistButton.disabled = !hasSongs;
+        shuffleButton.disabled = !hasSongs;
+        repeatButton.disabled = !hasSongs;
     }
+
+    updatePlayerControls();
 });
