@@ -269,9 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function clearPlaylist() {
         playlist.forEach(song => {
             URL.revokeObjectURL(song.url);
-            if (song.artwork) {
-                URL.revokeObjectURL(song.artwork);
-            }
         });
         playlist = [];
         originalPlaylist = [];
