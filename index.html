@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <style>
-        /* 全体の設定 */
+        /* (CSS部分は変更ありません) */
         body {
             background-color: #212121;
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -18,26 +18,20 @@
             margin: 0;
             color: #e0e0e0;
         }
-
-        /* プレイヤー本体 */
         .audio-player {
-            position: relative; /* 子要素の位置の基準にする */
+            position: relative;
             background-color: #333;
             width: 350px;
             padding: 25px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-
-        /* ヘッダー部分 ("Now Playing") */
         .header {
             font-size: 14px;
             color: #bbb;
             margin-bottom: 20px;
             text-align: center;
         }
-
-        /* ★追加: インフォメーションボタン */
         .info-btn {
             position: absolute;
             top: 25px;
@@ -51,8 +45,6 @@
         .info-btn:hover {
             color: #fff;
         }
-
-        /* ジャケット写真の部分 */
         .album-art {
             width: 200px;
             height: 200px;
@@ -65,8 +57,6 @@
             font-size: 80px;
             color: #888;
         }
-
-        /* 曲情報の部分 */
         .song-info {
             text-align: center;
             min-height: 40px;
@@ -81,8 +71,6 @@
             font-size: 14px;
             color: #bbb;
         }
-
-        /* 操作ボタン全体 */
         .controls {
             display: flex;
             justify-content: center;
@@ -90,7 +78,6 @@
             gap: 30px;
             margin-bottom: 20px;
         }
-        
         .controls button, .extra-controls button {
             background: none;
             border: none;
@@ -102,7 +89,6 @@
         .controls button:hover, .extra-controls button:hover {
             color: #fff;
         }
-        
         #play-pause-btn {
             background-color: #007bff;
             width: 60px;
@@ -118,7 +104,6 @@
         #play-pause-btn:hover {
             background-color: #0056b3;
         }
-        
         .extra-controls {
             display: flex;
             justify-content: center;
@@ -129,7 +114,6 @@
         .extra-controls button.active {
             color: #007bff;
         }
-
         .action-buttons {
             display: flex;
             justify-content: space-between;
@@ -154,7 +138,6 @@
         .action-buttons i {
             margin-right: 8px;
         }
-        
         #playlist {
             list-style: none;
             padding: 0;
@@ -177,12 +160,9 @@
             color: white;
             font-weight: bold;
         }
-        
         #file-input {
             display: none;
         }
-
-        /* ★追加: 注意事項ウィンドウのスタイル */
         .info-overlay {
             position: fixed;
             top: 0;
@@ -190,7 +170,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7);
-            display: none; /* 初期状態では非表示 */
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -236,7 +216,6 @@
             font-weight: bold;
             cursor: pointer;
         }
-
     </style>
 </head>
 <body>
@@ -244,7 +223,6 @@
     <div class="audio-player">
         <div class="header">Now Playing</div>
         <button id="info-btn" class="info-btn"><i class="fas fa-info-circle"></i></button>
-
         <div class="album-art">
             <i class="fas fa-music"></i>
         </div>
@@ -271,7 +249,7 @@
     <div class="info-overlay" id="infoOverlay">
         <div class="info-content">
             <button class="close-button" id="closeInfo">&times;</button>
-            <h2>【ご利用にあたっての注意点】</h2>
+            <h2>【ご利用にあたてての注意点】</h2>
             <p>このアプリは、お客様ご自身が合法的に所有するMP3音楽ファイルを、ウェブブラウザ上で個人的に楽しむためのシンプルな音楽プレイヤーです。</p>
             <h3>著作権の遵守:</h3>
             <ul>
@@ -291,13 +269,12 @@
     </div>
     
     <audio id="audio"></audio>
-    <input type="file" id="file-input" accept="audio/*" multiple>
+    <input type="file" id="file-input" accept=".mp3" multiple>
 
     <script>
-        // HTMLの要素を取得
+        // (JavaScript部分は変更ありません)
         const audio = document.getElementById('audio');
         const fileInput = document.getElementById('file-input');
-        // ... (以前のコードと同じ要素)
         const uploadBtn = document.getElementById('upload-btn');
         const clearBtn = document.getElementById('clear-btn');
         const playPauseBtn = document.getElementById('play-pause-btn');
@@ -309,13 +286,10 @@
         const songTitle = document.getElementById('song-title');
         const songArtist = document.getElementById('song-artist');
         const playlistElement = document.getElementById('playlist');
-
-        // ★追加: 注意事項ウィンドウ関連の要素を取得
         const infoBtn = document.getElementById('info-btn');
         const infoOverlay = document.getElementById('infoOverlay');
         const closeInfoBtn = document.getElementById('closeInfo');
 
-        // プレイヤーの状態を管理する変数
         let playlist = [];
         let currentSongIndex = 0;
         let isPlaying = false;
@@ -323,23 +297,18 @@
         let isShuffle = false;
         const MAX_SONGS = 30;
 
-        // --- イベントリスナー ---
-
-        // ★追加: インフォメーションボタンの処理
         infoBtn.addEventListener('click', () => {
-            infoOverlay.style.display = 'flex'; // ウィンドウを表示
+            infoOverlay.style.display = 'flex';
         });
         closeInfoBtn.addEventListener('click', () => {
-            infoOverlay.style.display = 'none'; // ウィンドウを非表示
+            infoOverlay.style.display = 'none';
         });
-        // ウィンドウの外側をクリックしても閉じるようにする
         infoOverlay.addEventListener('click', (e) => {
             if (e.target === infoOverlay) {
                 infoOverlay.style.display = 'none';
             }
         });
 
-        // (ここから下は以前のコードと同じです)
         uploadBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => {
             const files = e.target.files;
@@ -394,7 +363,6 @@
             shuffleBtn.classList.toggle('active', isShuffle);
         });
 
-        // --- 関数 ---
         function loadSong(index) {
             if (index < 0 || index >= playlist.length) return;
             currentSongIndex = index;
@@ -445,7 +413,7 @@
             playlistElement.innerHTML = '';
             playlist.forEach((song, index) => {
                 const li = document.createElement('li');
-                li.textContent = song.name.replace(/\.mp3$/i, ''); // 大文字小文字を区別せず.mp3を削除
+                li.textContent = song.name.replace(/\.mp3$/i, '');
                 if (index === currentSongIndex) {
                     li.classList.add('playing');
                 }
