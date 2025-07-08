@@ -25,6 +25,7 @@
             padding: 25px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.1s ease-out;
         }
         .header {
             font-size: 14px;
@@ -272,7 +273,6 @@
     <input type="file" id="file-input" accept=".mp3" multiple>
 
     <script>
-        // (JavaScript部分は変更ありません)
         const audio = document.getElementById('audio');
         const fileInput = document.getElementById('file-input');
         const uploadBtn = document.getElementById('upload-btn');
@@ -289,6 +289,7 @@
         const infoBtn = document.getElementById('info-btn');
         const infoOverlay = document.getElementById('infoOverlay');
         const closeInfoBtn = document.getElementById('closeInfo');
+        const audioPlayer = document.querySelector('.audio-player');
 
         let playlist = [];
         let currentSongIndex = 0;
@@ -296,6 +297,13 @@
         let isRepeat = false;
         let isShuffle = false;
         const MAX_SONGS = 30;
+
+        // --- Web Audio API variables ---
+        let audioContext;
+        let analyser;
+        let source;
+        let dataArray;
+        let hue = 0;
 
         infoBtn.addEventListener('click', () => {
             infoOverlay.style.display = 'flex';
@@ -363,6 +371,33 @@
             shuffleBtn.classList.toggle('active', isShuffle);
         });
 
+        function setupAudioContext() {
+            if (audioContext) return;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            source = audioContext.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+            analyser.fftSize = 256;
+            const bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+            visualize();
+        }
+
+        function visualize() {
+            requestAnimationFrame(visualize);
+            if (!isPlaying || !analyser) return;
+            
+            analyser.getByteFrequencyData(dataArray);
+            
+            const bassAmount = dataArray.slice(0, 32).reduce((a, b) => a + b, 0) / 32;
+            
+            hue = (hue + 0.1) % 360;
+            const lightness = 20 + (bassAmount / 255) * 25;
+            
+            audioPlayer.style.backgroundColor = `hsl(${hue}, 70%, ${lightness}%)`;
+        }
+
         function loadSong(index) {
             if (index < 0 || index >= playlist.length) return;
             currentSongIndex = index;
@@ -375,6 +410,7 @@
 
         function playSong() {
             if (playlist.length === 0) return;
+            setupAudioContext();
             isPlaying = true;
             audio.play();
             playPauseIcon.classList.replace('fa-play', 'fa-pause');
@@ -385,6 +421,7 @@
             isPlaying = false;
             audio.pause();
             playPauseIcon.classList.replace('fa-pause', 'fa-play');
+            audioPlayer.style.backgroundColor = '#333'; // Reset on pause
         }
 
         function playNextSong() {
