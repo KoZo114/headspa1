@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <style>
-        /* (CSS部分は変更ありません) */
+        /* CSSは変更ありません */
         body {
             background-color: #212121;
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -406,6 +406,23 @@
             songTitle.textContent = file.name.replace(/\.mp3$/i, '');
             songArtist.textContent = '';
             updatePlaylist();
+
+            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+            // ★  ここに追加します (バックグラウンド再生対策)  ★
+            // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: file.name.replace(/\.mp3$/i, ''),
+                    artist: 'My Music',
+                    album: 'My Playlist',
+                    artwork: []
+                });
+
+                navigator.mediaSession.setActionHandler('play', playSong);
+                navigator.mediaSession.setActionHandler('pause', pauseSong);
+                navigator.mediaSession.setActionHandler('previoustrack', playPrevSong);
+                navigator.mediaSession.setActionHandler('nexttrack', playNextSong);
+            }
         }
 
         function playSong() {
