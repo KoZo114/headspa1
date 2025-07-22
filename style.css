@@ -385,3 +385,18 @@ button i.fas {
 .info-content .close-button:hover {
     color: #333;
 }
+
+/* --- External Game Link --- */
+.external-game-link {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.external-game-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.external-game-link a:hover {
+    text-decoration: underline;
+}
