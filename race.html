@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>シンプルレースゲーム</title>
+  <link rel="stylesheet" href="race.css">
+</head>
+<body>
+  <h1>走るキャラを当てるゲーム</h1>
+  <p>どのキャラが1位になるか予想してください。</p>
+  <select id="guess">
+    <option value="0">キャラ 1</option>
+    <option value="1">キャラ 2</option>
+    <option value="2">キャラ 3</option>
+  </select>
+  <button id="startButton">レース開始</button>
+  <div id="raceTrack">
+    <div class="runner" id="runner0">🏃‍♀️</div>
+    <div class="runner" id="runner1">🏃‍♀️</div>
+    <div class="runner" id="runner2">🏃‍♀️</div>
+  </div>
+  <p id="result"></p>
+  <script src="race.js"></script>
+</body>
+</html>

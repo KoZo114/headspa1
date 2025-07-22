@@ -1,0 +1,23 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #f0f2f5;
+  padding: 20px;
+  text-align: center;
+}
+#raceTrack {
+  position: relative;
+  height: 200px;
+  border: 1px solid #999;
+  margin-top: 20px;
+}
+.runner {
+  position: absolute;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 24px;
+}
+#runner0 { top: 20px; }
+#runner1 { top: 80px; }
+#runner2 { top: 140px; }
