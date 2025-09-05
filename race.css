@@ -1,0 +1,52 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #f0f2f5;
+  padding: 20px;
+  text-align: center;
+}
+#raceTrack {
+  position: relative;
+  height: 200px;
+  border: 1px solid #999;
+  margin-top: 20px;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 60px,
+    rgba(0, 0, 0, 0.1) 60px,
+    rgba(0, 0, 0, 0.1) 61px
+  );
+}
+.runner {
+  position: absolute;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 24px;
+  animation: bounce 0.3s infinite;
+}
+#runner0 { top: 20px; }
+#runner1 { top: 80px; }
+#runner2 { top: 140px; }
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+#raceTrack::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    #fff,
+    #fff 5px,
+    #000 5px,
+    #000 10px
+  );
+}
