@@ -3,79 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>シンプル音楽プレイヤー</title>
+    <title>AI Skills 動画編集ワークベンチ</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="info-overlay-trigger" id="infoTrigger">
-        <span class="info-icon">i</span>
-    </div>
+    <main class="app-shell">
+        <section class="hero">
+            <p class="eyebrow">Deterministic Video Editing Workbench</p>
+            <h1>AI Skills 動画編集ワークベンチ</h1>
+            <p class="hero-copy">
+                業務動画の「無音検出・フィラーカット・テロップ改行・ページング・SRT生成」をブラウザだけで試せる、自分専用編集ソフトのMVPです。
+                AIが得意な文字起こし結果を入力し、最終的な整形は再現性のあるアルゴリズムで固定します。
+            </p>
+            <div class="hero-actions">
+                <label class="primary-upload">
+                    <input id="videoInput" type="file" accept="video/*,audio/*">
+                    素材動画 / 音声を読み込む
+                </label>
+                <button id="loadSampleButton" type="button">サンプル字幕を投入</button>
+            </div>
+        </section>
 
-    <div class="info-overlay" id="infoOverlay">
-        <div class="info-content">
-            <span class="close-button" id="closeInfo">&times;</span>
-            <h2>【ご利用にあたっての注意点】</h2>
-            <p>このアプリは、お客様ご自身が合法的に所有するMP3音楽ファイルを、ウェブブラウザ上で個人的に楽しむためのシンプルな音楽プレイヤーです。</p>
-            <h3>著作権の遵守:</h3>
-            <ul>
-                <li>本アプリは、楽曲ファイルを一切提供いたしません。お客様ご自身でご用意いただいたMP3ファイルのみを読み込み、再生します。</li>
-                <li><strong>読み込む楽曲ファイルの著作権については、お客様ご自身で管理する責任があります。</strong> 著作権を侵害するファイル（例：違法にアップロードされた音源など）の利用は固く禁じます。</li>
-                <li>本アプリは、読み込んだ楽曲ファイルをインターネット上に送信（公衆送信）する機能は一切ありません。</li>
-            </ul>
-            <h3>私的利用の範囲:</h3>
-            <ul>
-                <li>本アプリは、お客様個人の利用を目的としています。楽曲の共有、配信、不特定多数への公開はできません。</li>
-            </ul>
-            <h3>免責事項:</h3>
-            <ul>
-                <li>本アプリの利用により発生した一切の損害について、当方は責任を負いかねます。お客様はご自身の責任において本アプリをご利用ください。</li>
-            </ul>
-        </div>
-    </div>
+        <section class="workspace-grid">
+            <article class="panel preview-panel">
+                <div class="panel-heading">
+                    <span>01</span>
+                    <h2>素材プレビュー</h2>
+                </div>
+                <video id="videoPreview" controls playsinline></video>
+                <p id="fileMeta" class="muted">まだ素材が読み込まれていません。</p>
+            </article>
 
-    <div class="player-container">
-        <h1>シンプル音楽プレイヤー</h1>
+            <article class="panel settings-panel">
+                <div class="panel-heading">
+                    <span>02</span>
+                    <h2>業務シーン設定</h2>
+                </div>
+                <div class="form-grid">
+                    <label>
+                        シーン
+                        <select id="sceneSelect">
+                            <option value="training">新卒研修 / 講義</option>
+                            <option value="youtube">社内 YouTube</option>
+                            <option value="webinar">ウェビナー記録</option>
+                            <option value="shorts">Shorts / Reels</option>
+                        </select>
+                    </label>
+                    <label>
+                        講師ID
+                        <select id="speakerSelect">
+                            <option value="default">共通</option>
+                            <option value="lecturerA">講師_A</option>
+                            <option value="lecturerB">講師_B</option>
+                        </select>
+                    </label>
+                    <label>
+                        1行最大文字数
+                        <input id="lineLengthInput" type="number" min="8" max="40" value="30">
+                    </label>
+                    <label>
+                        1ページ最低秒数
+                        <input id="minDurationInput" type="number" min="0.5" max="5" step="0.1" value="1.5">
+                    </label>
+                    <label>
+                        無音しきい値 (RMS)
+                        <input id="silenceThresholdInput" type="number" min="0.001" max="0.1" step="0.001" value="0.012">
+                    </label>
+                    <label>
+                        カット対象の無音秒数
+                        <input id="silenceDurationInput" type="number" min="0.5" max="12" step="0.1" value="4">
+                    </label>
+                </div>
+                <div class="switch-row">
+                    <label><input id="removeCommaInput" type="checkbox" checked> 表示から「、」を削除</label>
+                    <label><input id="removePeriodInput" type="checkbox" checked> 表示から「。」を削除</label>
+                    <label><input id="protectTermsInput" type="checkbox" checked> 事業用語を保護</label>
+                </div>
+            </article>
+        </section>
 
-        <div class="controls-top">
-            <input type="file" id="fileInput" accept=".mp3" multiple style="display: none;">
-            <button id="loadFileButton"><i class="fas fa-upload"></i> Load MP3 Files (up to 30)</button>
-        </div>
+        <section class="panel transcript-panel">
+            <div class="panel-heading">
+                <span>03</span>
+                <h2>文字起こし入力</h2>
+            </div>
+            <p class="muted">
+                ElevenLabs / WhisperX などで得た結果を貼り付けてください。各行は「開始秒|終了秒|本文」形式、または通常テキストでも動きます。
+            </p>
+            <textarea id="transcriptInput" spellcheck="false" placeholder="0.0|4.2|えーっと 本日は Claude Code を使った動画編集の自動化について説明します。"></textarea>
+            <div class="editor-actions">
+                <button id="processButton" type="button">7工程パイプラインを実行</button>
+                <button id="downloadSrtButton" type="button" disabled>SRTをダウンロード</button>
+                <button id="downloadJsonButton" type="button" disabled>編集JSONをダウンロード</button>
+            </div>
+        </section>
 
-        <div class="saved-controls">
-            <button id="saveButton" disabled><i class="fas fa-save"></i> Save Playlist</button>
-            <button id="loadButton" disabled><i class="fas fa-folder-open"></i> Load Saved</button>
-            <button id="clearButton" disabled><i class="fas fa-trash-alt"></i> Clear Saved</button>
-        </div>
+        <section class="output-grid">
+            <article class="panel">
+                <div class="panel-heading">
+                    <span>04</span>
+                    <h2>処理サマリー</h2>
+                </div>
+                <div id="summaryCards" class="summary-cards"></div>
+                <ol id="pipelineList" class="pipeline-list"></ol>
+            </article>
 
-        <div class="current-song">
-            <p id="currentSongTitle">No song selected</p>
-        </div>
+            <article class="panel">
+                <div class="panel-heading">
+                    <span>05</span>
+                    <h2>テロッププレビュー</h2>
+                </div>
+                <div id="captionPreview" class="caption-preview">処理後のテロップがここに表示されます。</div>
+            </article>
+        </section>
 
-        <div class="playback-controls">
-            <button id="prevButton" class="round-button"><i class="fas fa-backward"></i></button>
-            <button id="playPauseButton" class="round-button main-play-button"><i class="fas fa-play"></i></button>
-            <button id="nextButton" class="round-button"><i class="fas fa-forward"></i></button>
-        </div>
-
-        <div class="mode-controls-row">
-            <button id="repeatButton" class="small-text-button"><i class="fas fa-sync-alt"></i><span class="mode-text">OFF</span></button>
-            <button id="shuffleButton" class="small-text-button"><i class="fas fa-random"></i><span class="mode-text">OFF</span></button>
-        </div>
-
-        <div class="playlist-container">
-            <h2>Playlist</h2>
-            <ul id="playlist">
-                <li>Click "Load MP3 Files" to get started.</li>
-            </ul>
-        </div>
-
-        <p class="external-game-link">
-            <a href="race.html" target="_blank">
-                ウマ娘みたいなレースゲームを遊ぶ
-            </a>
-        </p>
-    </div>
+        <section class="panel export-panel">
+            <div class="panel-heading">
+                <span>06</span>
+                <h2>書き出しレシピ</h2>
+            </div>
+            <p class="muted">ブラウザMVPではMP4の直接エンコードは行わず、SRT / JSON と ffmpeg コマンドを生成します。</p>
+            <pre id="ffmpegCommand"><code>素材を読み込んで処理を実行すると ffmpeg コマンドが表示されます。</code></pre>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
